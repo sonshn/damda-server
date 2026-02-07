@@ -2,6 +2,7 @@ package com.damda.domain.member.service;
 
 import com.damda.domain.auth.service.AuthService;
 import com.damda.domain.member.entity.Member;
+import com.damda.domain.member.model.MemberReq;
 import com.damda.domain.member.model.MemberRes;
 import com.damda.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
-
     private final MemberRepository memberRepository;
     private final AuthService authService;
 
@@ -49,10 +49,20 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Boolean isNicknameValid(String nickname) {
-        Member member = memberRepository.findByNicknameAndStatusIs(nickname, Member.Status.ACTIVE).orElse(null);
+    @Transactional
+    public MemberRes updateMember(Member member, MemberReq memberReq) {
+        // TODO: if member == null ~~ 임시 코드, 차후 삭제
+        if(member == null){
+            member = memberRepository.findByNicknameAndStatusIs("민니", Member.Status.ACTIVE).orElse(null);
+        }
 
-        return member == null ? true : false;
+        member.updateNickname(memberReq.getNickname());
+        memberRepository.save(member);
+
+        MemberRes response = MemberRes.builder()
+                .nickname(member.getNickname())
+                .build();
+
+        return response;
     }
 }

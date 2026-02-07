@@ -1,9 +1,11 @@
 package com.damda.domain.member.controller;
 
+import com.damda.domain.member.model.MemberReq;
 import com.damda.domain.member.model.MemberRes;
 import com.damda.domain.member.service.MemberService;
 import com.damda.global.auth.model.AuthMember;
 import com.damda.global.util.RandomNickname;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -55,7 +57,7 @@ public class MemberController {
         return ResponseEntity.ok(suggested);
     }
 
-    // 내 정보 조회
+    // 내 정보(닉네임) 조회
     @GetMapping("/me")
     public ResponseEntity findMyInfo() {
 //    public ResponseEntity findMyInfo(@AuthenticationPrincipal AuthMember authMember) {
@@ -63,6 +65,19 @@ public class MemberController {
 //        MemberRes result = memberService.getMember(authMember.getMember().getMemberId());
         return ResponseEntity.ok(result);
     }
+
+    // 내 정보 수정
+    @PatchMapping("/me")
+//    public ResponseEntity updateMyInfo(@AuthenticationPrincipal AuthMember authMember,
+//                                       @RequestBody @Valid MemberReq memberReq) {
+    public ResponseEntity updateMyInfo(
+                                     @RequestBody @Valid MemberReq memberReq) {
+        MemberRes result = memberService.updateMember(null, memberReq);
+//        MemberRes result = memberService.updateMember(authMember.getMember().getMemberId(), memberReq);
+        return ResponseEntity.ok(result);
+    }
+
+
 
     // 닉네임 중복 확인
     @GetMapping("/check")

@@ -36,11 +36,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public MemberRes getMember(Member member) {
-        // TODO: if member == null ~~ 임시 코드, 차후 삭제
-        if(member == null){
-            member = memberRepository.findByNicknameAndStatusIs("민니", Member.Status.ACTIVE).orElse(null);
-        }
-
         MemberRes response = MemberRes.builder()
                 .nickname(member.getNickname())
                 .build();
@@ -51,11 +46,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public MemberRes updateMember(Member member, MemberReq memberReq) {
-        // TODO: if member == null ~~ 임시 코드, 차후 삭제
-        if(member == null){
-            member = memberRepository.findByNicknameAndStatusIs("민니", Member.Status.ACTIVE).orElse(null);
-        }
-
         member.updateNickname(memberReq.getNickname());
         memberRepository.save(member);
 

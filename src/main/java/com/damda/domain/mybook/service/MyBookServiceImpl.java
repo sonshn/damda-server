@@ -248,7 +248,13 @@ public class MyBookServiceImpl implements MyBookService {
                 // publishDate 업데이트
                 bookInfo.getPublishDate().ifPresent(stringDate -> {
                     LocalDate publishDate = StringUtils.toLocalDate(stringDate);
-                    mybook.getBook().updatePublishDate(publishDate.atStartOfDay());
+                    LocalDateTime publishedDateTime = null;
+
+                    if(publishDate != null) {
+                        publishedDateTime = publishDate.atStartOfDay();
+                    }
+
+                    mybook.getBook().updatePublishDate(publishedDateTime);
                 });
                 // isbn 업데이트
                 bookInfo.getIsbn().ifPresent(isbn -> mybook.getBook().updateIsbn(isbn));

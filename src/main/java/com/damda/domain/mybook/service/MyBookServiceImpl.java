@@ -176,12 +176,6 @@ public class MyBookServiceImpl implements MyBookService {
     @Override
     @Transactional
     public Long updateMyBook(Member member, Long mybookId, UpdateMyBookReq myBookReq) {
-        //TODO: 임시 회원, 차후 삭제
-        if(member == null) {
-            member = memberRepository.findByNicknameAndStatusIs("민니", Member.Status.ACTIVE)
-                    .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
-        }
-
         MyBook mybook = myBookRepository.findByMybookIdAndStatusIs(mybookId, MyBook.Status.ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
 
@@ -277,12 +271,6 @@ public class MyBookServiceImpl implements MyBookService {
     @Override
     @Transactional
     public Long updateReadingStatus(Member member, Long mybookId, HistoryInfo historyInfo) {
-        //TODO: 임시 회원, 차후 삭제
-        if(member == null) {
-            member = memberRepository.findByNicknameAndStatusIs("민니", Member.Status.ACTIVE)
-                    .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
-        }
-
         MyBook mybook = myBookRepository.findByMybookIdAndStatusIs(mybookId, MyBook.Status.ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
 

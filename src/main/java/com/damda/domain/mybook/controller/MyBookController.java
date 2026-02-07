@@ -41,22 +41,22 @@ public class MyBookController {
 
     @PatchMapping("/{mybookId}")
     public ResponseEntity updateMyBookStatus(
-//            @AuthenticationPrincipal AuthMember authMember,
+            @AuthenticationPrincipal AuthMember authMember,
             @PathVariable(value = "mybookId") Long mybookId,
             @RequestBody UpdateMyBookReq myBookReq) {
         Map<String, Long> result = new HashMap<>();
-        result.put("mybookId", myBookService.updateMyBook(null, mybookId, myBookReq));
+        result.put("mybookId", myBookService.updateMyBook(authMember.getMember(), mybookId, myBookReq));
 
         return ResponseEntity.ok(result);
     }
 
     @PatchMapping("/{mybookId}/reading-status")
     public ResponseEntity updateMyBookReadingStatus(
-//            @AuthenticationPrincipal AuthMember authMember,
+            @AuthenticationPrincipal AuthMember authMember,
             @PathVariable(value = "mybookId") Long mybookId,
             @RequestBody HistoryInfo historyInfo) {
         Map<String, Long> result = new HashMap<>();
-        result.put("mybookId", myBookService.updateReadingStatus(null, mybookId, historyInfo));
+        result.put("mybookId", myBookService.updateReadingStatus(authMember.getMember(), mybookId, historyInfo));
 
         return ResponseEntity.ok(result);
     }

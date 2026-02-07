@@ -2,6 +2,7 @@ package com.damda.domain.mybook.controller;
 
 import com.damda.domain.mybook.model.MyBookReq;
 import com.damda.domain.mybook.model.MyBookRes;
+import com.damda.domain.mybook.model.UpdateMyBookReq;
 import com.damda.domain.mybook.service.MyBookService;
 import com.damda.global.auth.model.AuthMember;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/mybooks")
@@ -32,5 +36,18 @@ public class MyBookController {
                                              @AuthenticationPrincipal AuthMember authMember) {
         myBookService.deleteMyBook(authMember.getMember().getMemberId(), mybook_id);
         return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
+    }
+
+    @PatchMapping("/{mybookId}")
+//    public ResponseEntity updateMyBookStatus(
+//            @AuthenticationPrincipal AuthMember authMember,
+//            @PathVariable(value = "mybookId") Integer mybookId) {
+    public ResponseEntity updateMyBookStatus(
+            @PathVariable(value = "mybookId") Integer mybookId,
+            @RequestBody UpdateMyBookReq myBookReq) {
+        Map<String, Long> result = new HashMap<>();
+        result.put("mybookId", myBookService.updateMyBook(null, mybookId, myBookReq));
+
+        return ResponseEntity.ok(result);
     }
 }

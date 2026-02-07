@@ -9,17 +9,17 @@ import com.damda.domain.book.repository.WriterRepository;
 import com.damda.domain.member.entity.Member;
 import com.damda.domain.member.repository.MemberRepository;
 import com.damda.domain.mybook.entity.MyBook;
-import com.damda.domain.mybook.model.BookInfo;
-import com.damda.domain.mybook.model.HistoryInfo;
-import com.damda.domain.mybook.model.MyBookReq;
-import com.damda.domain.mybook.model.MyBookRes;
+import com.damda.domain.mybook.model.*;
 import com.damda.domain.mybook.repository.MyBookRepository;
 import com.damda.global.exception.BaseException;
+import com.damda.global.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.damda.global.exception.ErrorCode.*;
@@ -171,5 +171,104 @@ public class MyBookServiceImpl implements MyBookService {
 
         // SOFT DELETE: status를 INACTIVE로 변경
         myBook.updateToInactive();
+    }
+
+    @Override
+    @Transactional
+    public Long updateMyBook(Member member, Integer mybookId, UpdateMyBookReq myBookReq) {
+        //TODO: 임시 회원, 차후 삭제
+        if(member == null) {
+            member = memberRepository.findByNicknameAndStatusIs("민니", Member.Status.ACTIVE)
+                    .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
+        }
+
+        MyBook mybook = myBookRepository.findByMybookIdAndStatusIs(Long.valueOf(mybookId), MyBook.Status.ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
+
+        if (!member.getMemberId().equals(mybook.getMember().getMemberId())) {
+            throw new BaseException(BOOK_NOT_OWNED_BY_MEMBER);
+        }
+
+        // 이유 업데이트
+        myBookReq.getReason().ifPresent(reason -> {
+            if(reason.isBlank()) {
+                throw new BaseException(MYBOOK_REASON_CANNOT_BE_EMPTY);
+            }
+            mybook.updateReason(reason);
+        });
+
+        // historyInfo 업데이트
+        myBookReq.getHistoryInfo().ifPresent(historyInfo -> {
+            // startedDate 업데이트
+            historyInfo.getStartedDate().ifPresent(stringDate -> {
+                LocalDateTime startedDate = null;
+                startedDate = StringUtils.toLocalDateTime(stringDate);
+                mybook.updateStartedDate(startedDate);
+            });
+            // finishedDate 업데이트
+            historyInfo.getFinishedDate().ifPresent(stringDate -> {
+                LocalDateTime finishedDate = null;
+                finishedDate = StringUtils.toLocalDateTime(stringDate);
+                mybook.updateFinishedDate(finishedDate);
+            });
+            // readingStatus 업데이트
+            mybook.updateReadingStatus();
+        });
+
+        // bookInfo 업데이트
+        if(mybook.getBook().getSource() == Book.Source.CUSTOM) {
+            myBookReq.getBookInfo().ifPresent(bookInfo -> {
+                // title 업데이트
+                bookInfo.getTitle().ifPresent(title -> {
+                    if(title.isBlank()) {
+                        throw new BaseException(BOOK_TITLE_CANNOT_BE_EMPTY);
+                    }
+                    mybook.getBook().updateTitle(title);
+                });
+
+                // author 업데이트
+                bookInfo.getAuthor().ifPresent(author -> {
+                    // Writer 조회 또는 생성
+                    Writer writer = writerRepository.findByWriterName(author)
+                            .orElseGet(() -> writerRepository.save(
+                                    Writer.builder()
+                                            .writerName(author)
+                                            .build()
+                            ));
+
+                    // Author 관계 생성
+                    if (!authorRepository.existsByBookAndWriter(mybook.getBook(), writer)) {
+                        authorRepository.save(Author.builder()
+                                .book(mybook.getBook())
+                                .writer(writer)
+                                .build());
+                    }
+                });
+
+                // publisher 업데이트
+                bookInfo.getPublisher().ifPresent(publisher -> mybook.getBook().updatePublisher(publisher));
+                // publishDate 업데이트
+                bookInfo.getPublishDate().ifPresent(stringDate -> {
+                    LocalDate publishDate = null;
+                    publishDate = StringUtils.toLocalDate(stringDate);
+                    mybook.getBook().updatePublishDate(publishDate.atStartOfDay());
+                });
+                // isbn 업데이트
+                bookInfo.getIsbn().ifPresent(isbn -> mybook.getBook().updateIsbn(isbn));
+                // totalPage 업데이트
+                bookInfo.getTotalPage().ifPresent(totalPage -> {
+                    Integer page = null;
+                    if(totalPage > 0) {
+                        page = totalPage;
+                    }
+                    mybook.getBook().updateTotalPage(page);
+                });
+            });
+        }
+
+        myBookRepository.save(mybook);
+        Long response = mybook.getMybookId();
+
+        return response;
     }
 }

@@ -49,7 +49,7 @@ public class Book extends BaseTime {
 
     @Column(name = "total_page")
     @Builder.Default
-    private int totalPage = 0;
+    private Integer totalPage = 0;
 
     @Column(name = "cover_image")
     private String coverImage;
@@ -64,6 +64,26 @@ public class Book extends BaseTime {
     public enum Source {
         ALADIN,  // 알라딘 API
         CUSTOM   // 사용자 직접 등록
+    }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
+
+    public void updatePublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public void updatePublishDate(LocalDateTime publishDate) {
+        this.publishDate = publishDate;
+    }
+
+    public void updateIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public void updateTotalPage(Integer totalPage) {
+        this.totalPage = totalPage;
     }
 
     @Builder

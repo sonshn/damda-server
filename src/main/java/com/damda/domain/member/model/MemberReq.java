@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class MemberReq {
     @NotBlank(message = "닉네임은 빈 값일 수 없습니다.")
     @Size(min=1, max=9,  message = "닉네임은 최소 1자, 최대 9자만 가능합니다.")
-    @Pattern(regexp = "^[a-zA-Z0-9가-힣]+$")
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "닉네임은 한글, 영문, 숫자만 사용할 수 있습니다.")
     private String nickname;
 
     private Member.Provider provider;

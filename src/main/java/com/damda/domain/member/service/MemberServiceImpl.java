@@ -2,6 +2,7 @@ package com.damda.domain.member.service;
 
 import com.damda.domain.auth.service.AuthService;
 import com.damda.domain.member.entity.Member;
+import com.damda.domain.member.model.MemberRes;
 import com.damda.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,5 +31,20 @@ public class MemberServiceImpl implements MemberService {
         member.updateStatus(Member.Status.INACTIVE);
         member.updateProviderId(null);
         memberRepository.save(member);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MemberRes getMember(Member member) {
+        // TODO: if member == null ~~ 임시 코드, 차후 삭제
+        if(member == null){
+            member = memberRepository.findByNicknameAndStatusIs("민니", Member.Status.ACTIVE).orElse(null);
+        }
+
+        MemberRes response = MemberRes.builder()
+                .nickname(member.getNickname())
+                .build();
+
+        return response;
     }
 }

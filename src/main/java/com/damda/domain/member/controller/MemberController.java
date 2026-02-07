@@ -1,5 +1,6 @@
 package com.damda.domain.member.controller;
 
+import com.damda.domain.member.model.MemberRes;
 import com.damda.domain.member.service.MemberService;
 import com.damda.global.auth.model.AuthMember;
 import com.damda.global.util.RandomNickname;
@@ -46,5 +47,14 @@ public class MemberController {
         } while (!memberService.isNicknameAvailable(suggested));
 
         return ResponseEntity.ok(suggested);
+    }
+
+    // 내 정보 조회
+    @GetMapping("/me")
+    public ResponseEntity findMyInfo() {
+//    public ResponseEntity findMyInfo(@AuthenticationPrincipal AuthMember authMember) {
+        MemberRes result = memberService.getMember(null);
+//        MemberRes result = memberService.getMember(authMember.getMember().getMemberId());
+        return ResponseEntity.ok(result);
     }
 }

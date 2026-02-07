@@ -175,14 +175,14 @@ public class MyBookServiceImpl implements MyBookService {
 
     @Override
     @Transactional
-    public Long updateMyBook(Member member, Integer mybookId, UpdateMyBookReq myBookReq) {
+    public Long updateMyBook(Member member, Long mybookId, UpdateMyBookReq myBookReq) {
         //TODO: 임시 회원, 차후 삭제
         if(member == null) {
             member = memberRepository.findByNicknameAndStatusIs("민니", Member.Status.ACTIVE)
                     .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
         }
 
-        MyBook mybook = myBookRepository.findByMybookIdAndStatusIs(Long.valueOf(mybookId), MyBook.Status.ACTIVE)
+        MyBook mybook = myBookRepository.findByMybookIdAndStatusIs(mybookId, MyBook.Status.ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
 
         if (!member.getMemberId().equals(mybook.getMember().getMemberId())) {
@@ -201,14 +201,12 @@ public class MyBookServiceImpl implements MyBookService {
         myBookReq.getHistoryInfo().ifPresent(historyInfo -> {
             // startedDate 업데이트
             historyInfo.getStartedDate().ifPresent(stringDate -> {
-                LocalDateTime startedDate = null;
-                startedDate = StringUtils.toLocalDateTime(stringDate);
+                LocalDateTime startedDate = StringUtils.toLocalDateTime(stringDate);
                 mybook.updateStartedDate(startedDate);
             });
             // finishedDate 업데이트
             historyInfo.getFinishedDate().ifPresent(stringDate -> {
-                LocalDateTime finishedDate = null;
-                finishedDate = StringUtils.toLocalDateTime(stringDate);
+                LocalDateTime finishedDate = StringUtils.toLocalDateTime(stringDate);
                 mybook.updateFinishedDate(finishedDate);
             });
             // readingStatus 업데이트
@@ -249,8 +247,7 @@ public class MyBookServiceImpl implements MyBookService {
                 bookInfo.getPublisher().ifPresent(publisher -> mybook.getBook().updatePublisher(publisher));
                 // publishDate 업데이트
                 bookInfo.getPublishDate().ifPresent(stringDate -> {
-                    LocalDate publishDate = null;
-                    publishDate = StringUtils.toLocalDate(stringDate);
+                    LocalDate publishDate = StringUtils.toLocalDate(stringDate);
                     mybook.getBook().updatePublishDate(publishDate.atStartOfDay());
                 });
                 // isbn 업데이트
@@ -267,8 +264,38 @@ public class MyBookServiceImpl implements MyBookService {
         }
 
         myBookRepository.save(mybook);
-        Long response = mybook.getMybookId();
 
-        return response;
+        return mybook.getMybookId();
+    }
+
+    @Override
+    @Transactional
+    public Long updateReadingStatus(Member member, Long mybookId, HistoryInfo historyInfo) {
+        //TODO: 임시 회원, 차후 삭제
+        if(member == null) {
+            member = memberRepository.findByNicknameAndStatusIs("민니", Member.Status.ACTIVE)
+                    .orElseThrow(() -> new BaseException(NOT_FOUND_USER));
+        }
+
+        MyBook mybook = myBookRepository.findByMybookIdAndStatusIs(mybookId, MyBook.Status.ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FOUND_MY_BOOK));
+
+        if (!member.getMemberId().equals(mybook.getMember().getMemberId())) {
+            throw new BaseException(BOOK_NOT_OWNED_BY_MEMBER);
+        }
+
+        // startedDate 업데이트
+        if(historyInfo.getStartedDate() != null) {
+            mybook.updateStartedDate(historyInfo.getStartedDate());
+        }
+
+        // finishedDate 업데이트
+        mybook.updateFinishedDate(historyInfo.getFinishedDate());
+
+        // readingStatus 업데이트
+        mybook.updateReadingStatus();
+        myBookRepository.save(mybook);
+
+        return mybook.getMybookId();
     }
 }

@@ -1,5 +1,6 @@
 package com.damda.domain.mybook.controller;
 
+import com.damda.domain.mybook.model.HistoryInfo;
 import com.damda.domain.mybook.model.MyBookReq;
 import com.damda.domain.mybook.model.MyBookRes;
 import com.damda.domain.mybook.model.UpdateMyBookReq;
@@ -39,14 +40,23 @@ public class MyBookController {
     }
 
     @PatchMapping("/{mybookId}")
-//    public ResponseEntity updateMyBookStatus(
-//            @AuthenticationPrincipal AuthMember authMember,
-//            @PathVariable(value = "mybookId") Integer mybookId) {
     public ResponseEntity updateMyBookStatus(
-            @PathVariable(value = "mybookId") Integer mybookId,
+//            @AuthenticationPrincipal AuthMember authMember,
+            @PathVariable(value = "mybookId") Long mybookId,
             @RequestBody UpdateMyBookReq myBookReq) {
         Map<String, Long> result = new HashMap<>();
         result.put("mybookId", myBookService.updateMyBook(null, mybookId, myBookReq));
+
+        return ResponseEntity.ok(result);
+    }
+
+    @PatchMapping("/{mybookId}/reading-status")
+    public ResponseEntity updateMyBookReadingStatus(
+//            @AuthenticationPrincipal AuthMember authMember,
+            @PathVariable(value = "mybookId") Long mybookId,
+            @RequestBody HistoryInfo historyInfo) {
+        Map<String, Long> result = new HashMap<>();
+        result.put("mybookId", myBookService.updateReadingStatus(null, mybookId, historyInfo));
 
         return ResponseEntity.ok(result);
     }

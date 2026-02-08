@@ -44,7 +44,7 @@ public class Book extends BaseTime {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false, length = 13)
+    @Column(length = 13)
     private String isbn;
 
     @Column(nullable = false, name = "total_page")

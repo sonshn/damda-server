@@ -1,27 +1,16 @@
 package com.damda.domain.mybook.controller;
 
-
-import com.damda.domain.member.entity.Member;
-import com.damda.domain.mybook.model.MyBookStoreRes;
-import com.damda.domain.mybook.model.MyBookHistoryRes;
-import com.damda.domain.mybook.model.MyBookSearchRes;
-import com.damda.domain.mybook.model.HistoryInfo;
-import com.damda.domain.mybook.model.MyBookReq;
-import com.damda.domain.mybook.model.MyBookRes;
-import com.damda.domain.mybook.model.UpdateMyBookReq;
+import com.damda.domain.mybook.model.*;
 import com.damda.domain.mybook.service.MyBookService;
-
 import com.damda.global.auth.model.AuthMember;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 

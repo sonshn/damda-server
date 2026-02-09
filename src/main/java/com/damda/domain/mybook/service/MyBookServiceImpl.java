@@ -1,39 +1,32 @@
 package com.damda.domain.mybook.service;
 
-import com.damda.domain.book.repository.AuthorRepository;
-import com.damda.domain.mybook.entity.MyBook;
-import com.damda.domain.mybook.repository.MyBookRepository;
-import com.damda.domain.mybook.model.MyBookStoreRes;
-import com.damda.domain.mybook.model.MyBookHistoryRes;
-import com.damda.domain.mybook.model.MyBookSearchRes;
-import com.damda.domain.member.entity.Member;
 import com.damda.domain.book.entity.Author;
 import com.damda.domain.book.entity.Book;
 import com.damda.domain.book.entity.Writer;
+import com.damda.domain.book.repository.AuthorRepository;
 import com.damda.domain.book.repository.BookRepository;
 import com.damda.domain.book.repository.WriterRepository;
+import com.damda.domain.member.entity.Member;
 import com.damda.domain.member.repository.MemberRepository;
+import com.damda.domain.mybook.entity.MyBook;
 import com.damda.domain.mybook.model.*;
+import com.damda.domain.mybook.repository.MyBookRepository;
 import com.damda.global.exception.BaseException;
-
+import com.damda.global.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.damda.global.exception.ErrorCode.BOOK_NOT_OWNED_BY_MEMBER;
-import static com.damda.global.exception.ErrorCode.NOT_FOUND_BOOK;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-import com.damda.global.util.StringUtils;
 import static com.damda.global.exception.ErrorCode.*;
 
 /**

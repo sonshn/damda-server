@@ -1,14 +1,7 @@
 package com.damda.domain.mybook.service;
 
-import com.damda.domain.mybook.model.*;
 import com.damda.domain.member.entity.Member;
-import com.damda.domain.mybook.model.HistoryInfo;
-import com.damda.domain.mybook.model.MyBookReq;
-import com.damda.domain.mybook.model.MyBookRes;
-import com.damda.domain.mybook.model.UpdateMyBookReq;
-import com.damda.domain.mybook.model.MyBookStoreRes;
-import com.damda.domain.mybook.model.MyBookHistoryRes;
-import com.damda.domain.mybook.model.MyBookSearchRes;
+import com.damda.domain.mybook.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

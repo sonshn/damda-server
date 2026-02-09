@@ -1,31 +1,25 @@
 package com.damda.domain.mybook.controller;
 
-import com.damda.domain.member.entity.Member;
-import com.damda.domain.mybook.model.MyBookStoreRes;
-import com.damda.domain.mybook.model.MyBookHistoryRes;
-import com.damda.domain.mybook.model.MyBookSearchRes;
-import com.damda.domain.mybook.model.HistoryInfo;
-import com.damda.domain.mybook.model.MyBookReq;
-import com.damda.domain.mybook.model.MyBookRes;
-import com.damda.domain.mybook.model.UpdateMyBookReq;
+import com.damda.domain.mybook.model.*;
 import com.damda.domain.mybook.service.MyBookService;
-
 import com.damda.global.auth.model.AuthMember;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 나의 책 컨트롤러
+ */
 @RestController
 @RequestMapping("/mybooks")
 @RequiredArgsConstructor
@@ -40,27 +34,27 @@ public class MyBookController {
      */
     @GetMapping
     public ResponseEntity<MyBookSearchRes> searchMyBooks(
-        @PageableDefault(page = 0, size = 10) Pageable pageable,
-        @RequestParam String query,
-        @AuthenticationPrincipal AuthMember authMember
+            @PageableDefault(page = 0, size = 10) Pageable pageable,
+            @RequestParam String query,
+            @AuthenticationPrincipal AuthMember authMember
     ) {
         return ResponseEntity.ok(myBookService.searchMyBooks(pageable, query, authMember.getMember()));
     }
 
     @GetMapping("/store")
     public ResponseEntity<Page<MyBookStoreRes>> getMyBookStore(
-        @PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-        @RequestParam(required = false) String keyword,
-        @AuthenticationPrincipal AuthMember authMember
+            @PageableDefault(page = 0, size = 5, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(required = false) String keyword,
+            @AuthenticationPrincipal AuthMember authMember
     ) {
         return ResponseEntity.ok(myBookService.getMyBookStore(pageable, keyword, authMember.getMember()));
     }
 
     @GetMapping("/history")
     public ResponseEntity<MyBookHistoryRes> getMyBookHistory(
-        @PageableDefault(page = 0, size = 5, sort = "startedDate", direction = Sort.Direction.ASC) Pageable pageable,
-        @RequestParam(required = false) String keyword,
-        @AuthenticationPrincipal AuthMember authMember
+            @PageableDefault(page = 0, size = 5, sort = "startedDate", direction = Sort.Direction.ASC) Pageable pageable,
+            @RequestParam(required = false) String keyword,
+            @AuthenticationPrincipal AuthMember authMember
     ) {
         return ResponseEntity.ok(myBookService.getMyBookHistory(pageable, keyword, authMember.getMember()));
     }
@@ -101,5 +95,18 @@ public class MyBookController {
         result.put("mybookId", myBookService.updateReadingStatus(authMember.getMember(), mybookId, historyInfo));
 
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 나의 책 상세 정보 조회
+     * @param authMember Spring Security에서 인증된 회원 정보
+     * @param mybookId 나의 책 ID
+     * @return 나의 책 상세 정보
+     */
+    @GetMapping("/{mybookId}")
+    public ResponseEntity<MyBookDetailRes> getMyBookDetail(@AuthenticationPrincipal AuthMember authMember,
+                                                           @PathVariable Long mybookId) {
+        MyBookDetailRes res = myBookService.getMyBookDetail(authMember.getMember().getMemberId(), mybookId);
+        return ResponseEntity.ok(res);
     }
 }

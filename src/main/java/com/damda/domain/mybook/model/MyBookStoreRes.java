@@ -11,6 +11,7 @@ import lombok.Getter;
 public class MyBookStoreRes {
     private Long mybookId;
     private LocalDateTime createdDate;
+    private String reason; // 읽고 싶은 이유
     private BookInfo bookInfo;
 
     @Getter

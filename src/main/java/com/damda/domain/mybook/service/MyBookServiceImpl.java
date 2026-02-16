@@ -58,6 +58,7 @@ public class MyBookServiceImpl implements MyBookService {
         return myBooks.map(myBook -> MyBookStoreRes.builder()
                 .mybookId(myBook.getMybookId())
                 .createdDate(myBook.getCreatedAt())
+                .reason(myBook.getReason())
                 .bookInfo(MyBookStoreRes.BookInfo.builder()
                         .title(myBook.getBook().getTitle())
                         .author(myBook.getBook().getAuthor().stream()
